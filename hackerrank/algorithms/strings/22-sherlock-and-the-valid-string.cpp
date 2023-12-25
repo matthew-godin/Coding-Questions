@@ -40,9 +40,9 @@ string isValid(string s) {
             if ((commonNumOccurrences + 1 == iter->second || iter->second - 1 == 0) && !seenOnceMoreSeen) {
                 seenOnceMoreSeen = true;
             } else {
-                finalAnswer = false;
+                return "NO";
             }
         }
     }
-    return finalAnswer ? "YES" : "NO";
+    return "YES";
 }
