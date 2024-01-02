@@ -12,63 +12,111 @@ struct DNA {
     string d;
 };
 
-void populateLPS(vector<int> &lps, const string &pattern) {
-    int j = 0;
-    lps[0] = 0;
-    for (int i = 1; i < pattern.length();) {
-        if (pattern[i] == pattern[j]) {
-            lps[i] = ++j;
-            ++i;
-        } else {
-            if (j > 0) {
-                j = lps[j - 1];
-            } else {
-                lps[i] = 0;
-                ++i;
+struct AhoCorasickNode {
+    map<char, AhoCorasickNode*> edges;
+    unordered_set<int> patternsMatched;
+    AhoCorasickNode* failNode = nullptr;
+    bool isRoot;
+
+    AhoCorasickNode(bool root = false) {
+        isRoot = root;
+    }
+};
+
+class AhoCorasickTrie {
+    AhoCorasickNode* root;
+
+    void clearRecursion(AhoCorasickNode* currentNode) {
+        for (auto iter = currentNode->edges.begin();
+            iter != currentNode->edges.end(); ++iter) {
+            clearRecursion(currentNode->edges[iter->first]);
+        }
+        delete currentNode;
+    }
+
+public:
+    AhoCorasickTrie(const vector<string> &patterns) {
+        root = new AhoCorasickNode(true);
+        AhoCorasickNode* currentNode;
+        for (int i = 0; i < patterns.size(); ++i) {
+            currentNode = root;
+            for (int j = 0; j < patterns[i].length(); ++j) {
+                if (currentNode->edges.find(patterns[i][j]) == currentNode->edges.end()) {
+                    currentNode->edges[patterns[i][j]] = new AhoCorasickNode();
+                }
+                currentNode = currentNode->edges[patterns[i][j]];
+            }
+            currentNode->patternsMatched.insert(i);
+        }
+        queue<AhoCorasickNode*> BFSQueue;
+        for (auto iter = root->edges.begin(); iter != root->edges.end(); ++iter) {
+            BFSQueue.push(root->edges[iter->first]);
+            root->edges[iter->first]->failNode = root;
+        }
+        while (BFSQueue.size() > 0) {
+            currentNode = BFSQueue.front();
+            BFSQueue.pop();
+            for (auto iter = currentNode->edges.begin();
+                iter != currentNode->edges.end(); ++iter) {
+                AhoCorasickNode* failNode = currentNode->failNode;
+                while (failNode->edges.find(iter->first) == failNode->edges.end()) {
+                    if (failNode->isRoot) {
+                        currentNode->edges[iter->first]->failNode = root;
+                        BFSQueue.push(currentNode->edges[iter->first]);
+                        goto AhoCorasickTrieL1;
+                    }
+                    failNode = failNode->failNode;
+                }
+                failNode = failNode->edges[iter->first];
+                currentNode->edges[iter->first]->failNode = failNode;
+                currentNode->edges[iter->first]->patternsMatched.insert(
+                    failNode->patternsMatched.begin(), failNode->patternsMatched.end());
+                BFSQueue.push(currentNode->edges[iter->first]);
+                AhoCorasickTrieL1: ;
             }
         }
     }
-}
 
-int searchKMP(const string &pattern, const string &text) {
-    int numOccurrences = 0;
-    int j = 0;
-    vector<int> lps(pattern.length());
-    populateLPS(lps, pattern);
-    for (int i = 0; text.length() - i >= pattern.length() - j;) {
-        if (pattern[j] == text[i]) {
-            ++j;
-            ++i;
-        }
-        if (j == pattern.length()) {
-            // Found pattern
-            ++numOccurrences;
-            j = lps[j - 1];
-        } else if (i < text.length() && pattern[j] != text[i]) {
-            if (j > 0) {
-                j = lps[j - 1];
-            } else {
-                ++i;
+    int search(const string &text, const vector<int> &health, int start, int end) {
+        int totalHealth = 0;
+        AhoCorasickNode* currentNode = root;
+        for (int i = 0; i < text.length(); ++i) {
+            while (currentNode->edges.find(text[i]) == currentNode->edges.end()) {
+                if (currentNode->isRoot) {
+                    goto searchL1;
+                }
+                currentNode = currentNode->failNode;
             }
+            currentNode = currentNode->edges[text[i]];
+            for (auto iter = currentNode->patternsMatched.begin();
+                iter != currentNode->patternsMatched.end(); ++iter) {
+                if (*iter >= start && *iter <= end) {
+                    totalHealth += health[*iter];
+                }
+            }
+            searchL1: ;
         }
+        return totalHealth;
     }
-    return numOccurrences;
-}
 
-void determineHealth(vector<string> genes, vector<int> health, vector<DNA> dnaStrands) {
+    void clear() {
+        clearRecursion(root);
+    }
+};
+
+void determineHealth(const vector<string> &genes, const vector<int> &health, const vector<DNA> &dnaStrands) {
+    AhoCorasickTrie ahoCorasickTrie(genes);
     int minHealth = INT_MAX, maxHealth = 0;
     for (int i = 0; i < dnaStrands.size(); ++i) {
-        int currentHealth = 0;
-        for (int j = dnaStrands[i].start; j <= dnaStrands[i].end; ++j) {
-            currentHealth += searchKMP(genes[j], dnaStrands[i].d) * health[j];
-        }
+        int currentHealth = ahoCorasickTrie.search(dnaStrands[i].d, health, dnaStrands[i].start, dnaStrands[i].end);
         if (currentHealth > maxHealth) {
             maxHealth = currentHealth;
         }
         if (currentHealth < minHealth) {
             minHealth = currentHealth;
         }
-    }   
+    }
+    ahoCorasickTrie.clear();
     cout << minHealth << " " << maxHealth << endl;
 }
 
