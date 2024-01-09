@@ -1,11 +1,73 @@
 import React from "react";
 
-const PasswordStrength = () => {
+const PasswordStrength = (props) => {
+    const hasUppercase = (password) => {
+        return /[A-Z]/.test(password);
+    };
+
+    const hasLowercase = (password) => {
+        return /[a-z]/.test(password);
+    };
+
+    const hasNumber = (password) => {
+        return /[0-9]/.test(password);
+    };
+
+    const hasSpecialCharacter = (password) => {
+        return /[!-/]/.test(password)
+            || /[:-@]/.test(password)
+            || /[[-`]/.test(password)
+            || /[{-~]/.test(password);
+    };
+
+    const hasMinimumLength = (password) => {
+        return password.length >= 8;
+    }
+
+    const getNumCharacteristics = (password) => {
+        let numCharacteristics = 0;
+        if (hasUppercase(password)) {
+            console.log("A");
+            ++numCharacteristics;
+        }
+        if (hasLowercase(password)) {
+            console.log("B");
+            ++numCharacteristics;
+        }
+        if (hasNumber(password)) {
+            console.log("C");
+            ++numCharacteristics;
+        }
+        if (hasSpecialCharacter(password)) {
+            console.log("D");
+            ++numCharacteristics;
+        }
+        if (hasMinimumLength(password)) {
+            console.log("E");
+            ++numCharacteristics;
+        }
+        return numCharacteristics;
+    };
+
+    const getValue = (password, values) => {
+        let numCharacteristics = getNumCharacteristics(password);
+        if (numCharacteristics > 2) {
+            if (numCharacteristics == 5) {
+                return values[0];
+            } else {
+                return values[1];
+            }
+        } else {
+            return values[2];
+        }
+    };
+
     return (
         <div
             className="px-5 py-5"
             style={{
-                backgroundColor: "green",
+                backgroundColor: getValue(props.password,
+                    ["green", "orange", "red"]),
             }}
             data-testid="passwordStrengthDiv"
         >
@@ -15,7 +77,8 @@ const PasswordStrength = () => {
                     textAlign: "center",
                 }}
             >
-                Strong Password
+                {getValue(props.password,
+                    ["Strong", "Moderate", "Weak"])} Password
             </h4>
         </div>
     );
