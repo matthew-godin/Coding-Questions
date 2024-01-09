@@ -27,23 +27,18 @@ const PasswordStrength = (props) => {
     const getNumCharacteristics = (password) => {
         let numCharacteristics = 0;
         if (hasUppercase(password)) {
-            console.log("A");
             ++numCharacteristics;
         }
         if (hasLowercase(password)) {
-            console.log("B");
             ++numCharacteristics;
         }
         if (hasNumber(password)) {
-            console.log("C");
             ++numCharacteristics;
         }
         if (hasSpecialCharacter(password)) {
-            console.log("D");
             ++numCharacteristics;
         }
         if (hasMinimumLength(password)) {
-            console.log("E");
             ++numCharacteristics;
         }
         return numCharacteristics;
