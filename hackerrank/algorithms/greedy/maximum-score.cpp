@@ -5,8 +5,7 @@ long getMaximumScore(vector<int> stockPrice) {
 		int indexDifference = stockPrice[i] - i;
 		if (subsequenceTotals.find(indexDifference) != subsequenceTotals.end()) {
 			subsequenceTotals[indexDifference] += stockPrice[i];
-		}
-		else {
+		} else {
 			subsequenceTotals[indexDifference] = stockPrice[i];
 		}
 		if (subsequenceTotals[indexDifference] > total) {
