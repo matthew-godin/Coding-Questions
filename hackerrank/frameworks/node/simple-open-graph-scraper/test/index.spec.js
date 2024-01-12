@@ -2,7 +2,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const TinyScraper = require('../tiny-scraper');
 const PORT = process.env.PORT || 8000;
-const server = require('../server/index')(PORT);
+const server = require('../server/index');
 const should = chai.should();
 const baseURL = `http://localhost:${PORT}`;
 
@@ -16,16 +16,15 @@ describe('tiny_og_scraper', () => {
     })
 
     it('Should emit the scrapeStarted event once the processing starts', (done) => {
-        /*const scrapeUrl = `${baseURL}/url1`
+        const scrapeUrl = `${baseURL}/url1`
         scraper = new TinyScraper(scrapeUrl);
         scraper.on('scrapeStarted', url => {
             url.should.eql(scrapeUrl);
             done();
-        });*/
-        done();
+        });
     });
 
-    /*it('Should emit an error event if the url is invalid', (done) => {
+    it('Should emit an error event if the url is invalid', (done) => {
         scraper = new TinyScraper(`${baseURL}`);
         scraper.on('error', (err) => {
             done();
@@ -64,5 +63,5 @@ describe('tiny_og_scraper', () => {
         scraper.on('timeout', () => {
             done();
         });
-    });*/
+    });
 });

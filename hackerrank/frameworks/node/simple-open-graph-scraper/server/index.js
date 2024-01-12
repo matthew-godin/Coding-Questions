@@ -18,11 +18,4 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
-if (process.env.NODE_ENV === 'test') {
-    module.exports = (port) => {
-        return app.listen(port || process.env.PORT || 8000);
-    };
-} else {
-    app.listen(process.env.PORT || 8000);
-    module.exports = app;
-}
+module.exports = app.listen(process.env.PORT || 8000);
