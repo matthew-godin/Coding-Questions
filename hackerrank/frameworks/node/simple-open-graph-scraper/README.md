@@ -2,7 +2,7 @@
 
 Your company is planning to launch a chat service to be used internally by all the employees. One key functionality that is missing in the service is the ability to scrape the URLs typed in the message in order to fetch the Open Graph Metadata of the page and display the rich preview of the webpage. As the NodeJS developer of your company, you have been assigned the responsibility to write the scraper. This will extract the Title, Descriptions, and Image properties from the Head section of the HTML of the provided URL and return it as JSON.
 
-The class TinyScraper should extend the EventEmitter clas and should make use of the event pattern to communicate data to and from the scraper. The primary goal is tho extract the Open Graph Tags (og:*) from the HTML of the webpage and convert it into JSON. (Read more about the Open Graph tags here.)
+The class TinyScraper should extend the EventEmitter class and should make use of the event pattern to communicate data to and from the scraper. The primary goal is tho extract the Open Graph Tags (og:*) from the HTML of the webpage and convert it into JSON. (Read more about the Open Graph tags here.)
 
 Complete the module tiny-scraper.js and implement the following set of functionalities:
 
