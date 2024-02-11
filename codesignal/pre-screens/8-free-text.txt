@@ -1,0 +1,8 @@
+In as much detail as you can, describe what happens behind the scenes when you visit a webpage in your browser.
+
+The browser starts by finding the IP address corresponding to the URL sought by retrieving that information from a DNS (Domain Name Server).
+Then, the browser calls the server locating at the retrieved IP address and asks a copy of the website using the TCP/IP protocol.
+If the server doesn't encounter any error and allows the website to be retrieved, it sends a "200 OK" status response code to the browser indicating that the website can be retrieved.
+Then, the server sends all the files forming the website to the browser in a series of data packets.
+Once all the data packets have been received by the browser, the browser assembles them to recreate all the files forming the website.
+Finally, the browser uses a browser engine to render the website on the screen based to the files received.
