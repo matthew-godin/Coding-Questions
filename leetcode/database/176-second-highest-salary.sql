@@ -1,0 +1,1 @@
+select (select max(salary) from Employee e where (select count(distinct salary) from Employee p where e.salary <= p.salary) = 2) as SecondHighestSalary
